@@ -8,6 +8,7 @@ public class TaggingGun : Gun
     [SerializeField] GameObject raycast;
 
     PhotonView PV;
+    [SerializeField] GameObject hitmarker;
 
     void Awake()
     {
@@ -30,6 +31,16 @@ public class TaggingGun : Gun
         }
     }
 
+    void HitActive()
+    {
+        hitmarker.SetActive(true);
+    }
+
+    void HitDisable()
+    {
+        hitmarker.SetActive(false);
+    }
+
     [PunRPC]
     void RPC_Shoot(Vector3 hitPosition, Vector3 hitNormal)
     {
@@ -39,6 +50,9 @@ public class TaggingGun : Gun
             GameObject bulletImpactObj = Instantiate(bulletImpactPrefab, hitPosition + hitNormal * 0.001f, Quaternion.LookRotation(hitNormal, Vector3.up) * bulletImpactPrefab.transform.rotation);
             Destroy(bulletImpactObj, 10f);
             bulletImpactObj.transform.SetParent(colliders[0].transform);
+
+            HitActive();
+            Invoke("HitDisable", 0.2f);
         }
     }
 }

@@ -39,6 +39,9 @@ public class PlayerController : MonoBehaviourPunCallbacks, IDamageable
 
     PlayerManager playerManager;
 
+    [SerializeField] TextMeshProUGUI timer;
+    public bool canWalk = true;
+    float startTimeDelay = 5.0f;
 
     void Awake()
     {
@@ -64,6 +67,7 @@ public class PlayerController : MonoBehaviourPunCallbacks, IDamageable
         if (PhotonNetwork.IsMasterClient)
         {
             isSearching = true;
+            canWalk = false;
         }
         else
         {
@@ -86,6 +90,11 @@ public class PlayerController : MonoBehaviourPunCallbacks, IDamageable
         Move();
         Jump();
         SetRole();
+
+        if (canWalk == false)
+        {
+            StartDelay();
+        }
     }
 
     void SetRole()
@@ -104,25 +113,43 @@ public class PlayerController : MonoBehaviourPunCallbacks, IDamageable
 
     void Move()
     {
-        Vector3 moveDir = new Vector3(Input.GetAxisRaw("Horizontal"), 0, Input.GetAxisRaw("Vertical")).normalized;
+        if(canWalk == true)
+        {
+            Vector3 moveDir = new Vector3(Input.GetAxisRaw("Horizontal"), 0, Input.GetAxisRaw("Vertical")).normalized;
 
-        moveAmount = Vector3.SmoothDamp(moveAmount, moveDir * (Input.GetKey(KeyCode.LeftShift) ? sprintSpeed : walkSpeed), ref smoothMoveVelocity, smoothTime);
+            moveAmount = Vector3.SmoothDamp(moveAmount, moveDir * (Input.GetKey(KeyCode.LeftShift) ? sprintSpeed : walkSpeed), ref smoothMoveVelocity, smoothTime);
+        }
     }
 
     void Jump()
     {
-        if(!Physics.Raycast(transform.position, -Vector3.up, 2f + 0.1f))
+        if(canWalk == true)
         {
-            grounded = false;
-        } 
-        else
-        {
-            grounded = true;
-        }
+            if (!Physics.Raycast(transform.position, -Vector3.up, 2f + 0.1f))
+            {
+                grounded = false;
+            }
+            else
+            {
+                grounded = true;
+            }
 
-        if (Input.GetKeyDown(KeyCode.Space) && grounded)
+            if (Input.GetKeyDown(KeyCode.Space) && grounded)
+            {
+                rb.velocity += jumpForce * Vector3.up;
+            }
+        }
+    }
+
+    void StartDelay()
+    {
+        startTimeDelay -= Time.deltaTime;
+        timer.text = startTimeDelay.ToString("f1");
+
+        if(startTimeDelay <= 0.0f)
         {
-            rb.velocity += jumpForce * Vector3.up;
+            canWalk = true;
+            timer.gameObject.SetActive(false);
         }
     }
 
@@ -146,7 +173,6 @@ public class PlayerController : MonoBehaviourPunCallbacks, IDamageable
 
     void PropChange()
     {
-
         if (Input.GetMouseButtonDown(0))
         {
             if (Physics.Raycast(transform.position, transform.TransformDirection(Vector3.forward), out RaycastHit hit, 6.0f))
@@ -190,9 +216,12 @@ public class PlayerController : MonoBehaviourPunCallbacks, IDamageable
 
     void PlayerShoot()
     {
-        if(Input.GetMouseButtonDown(0))
+        if(canWalk == true)
         {
-            items[itemIndex].Use();
+            if (Input.GetMouseButtonDown(0))
+            {
+                items[itemIndex].Use();
+            }
         }
     }
 
@@ -226,6 +255,5 @@ public class PlayerController : MonoBehaviourPunCallbacks, IDamageable
     void Die()
     {
         playerManager.Die();
-        isSearching = true;
     }
 }

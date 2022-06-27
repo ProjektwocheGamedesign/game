@@ -8,6 +8,7 @@ public class PlayerManager : MonoBehaviour
     PhotonView PV;
 
     GameObject controller;
+    [SerializeField] PlayerController playerController;
 
     void Awake()
     {
@@ -31,5 +32,6 @@ public class PlayerManager : MonoBehaviour
     {
         PhotonNetwork.Destroy(controller);
         CreateController();
+        playerController.isSearching = true;
     }
 }
