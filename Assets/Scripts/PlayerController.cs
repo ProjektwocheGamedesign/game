@@ -43,6 +43,10 @@ public class PlayerController : MonoBehaviourPunCallbacks, IDamageable
     public bool canWalk = true;
     float startTimeDelay = 5.0f;
 
+    [SerializeField] TextMeshProUGUI gameEndTimer;
+    [SerializeField] GameObject gameEnded;
+    float timeTillGameEnd = 300.0f;
+
     void Awake()
     {
         rb = GetComponent<Rigidbody>();
@@ -79,6 +83,8 @@ public class PlayerController : MonoBehaviourPunCallbacks, IDamageable
 
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
+
+        gameEnded.SetActive(false);
     }
 
     void Update()
@@ -95,6 +101,8 @@ public class PlayerController : MonoBehaviourPunCallbacks, IDamageable
         {
             StartDelay();
         }
+
+        GameEnd();
     }
 
     void SetRole()
@@ -150,6 +158,22 @@ public class PlayerController : MonoBehaviourPunCallbacks, IDamageable
         {
             canWalk = true;
             timer.gameObject.SetActive(false);
+        }
+    }
+
+    void GameEnd()
+    {
+        timeTillGameEnd -= Time.deltaTime;
+        gameEndTimer.text = timeTillGameEnd.ToString("f1");
+
+        if (timeTillGameEnd <= 0.0f)
+        {
+            canWalk = false;
+            gameEndTimer.gameObject.SetActive(false);
+            roleText.gameObject.SetActive(false);
+            gameEnded.SetActive(true);
+
+            rb.velocity = Vector3.zero;
         }
     }
 
