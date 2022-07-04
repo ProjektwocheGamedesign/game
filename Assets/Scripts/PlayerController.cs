@@ -19,7 +19,7 @@ public class PlayerController : MonoBehaviourPunCallbacks, IDamageable
     int itemIndex;
 
     public float lookSpeed = 2.0f;
-    public float lookXLimit = 45.0f;
+    public float lookXLimit = 90.0f;
     Vector2 rotation = Vector2.zero;
 
     bool grounded;

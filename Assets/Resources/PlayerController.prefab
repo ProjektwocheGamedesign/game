@@ -606,11 +606,11 @@ CapsuleCollider:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1873726692806923502}
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 13400000, guid: 3def04886f971164495befde072dd649, type: 2}
   m_IsTrigger: 0
   m_Enabled: 1
-  m_Radius: 0.5
-  m_Height: 1.9
+  m_Radius: 0.48
+  m_Height: 1.8
   m_Direction: 1
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!54 &8234062499743069757
@@ -691,7 +691,7 @@ MonoBehaviour:
   roleText: {fileID: 7047015694844929320}
   ui: {fileID: 991534087899999255}
   lookSpeed: 2
-  lookXLimit: 60
+  lookXLimit: 35
   isSearching: 1
   timer: {fileID: 7913417414375778515}
   canWalk: 0
